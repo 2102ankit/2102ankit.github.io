@@ -1,183 +1,147 @@
-const blogContent = document.getElementById("blog-content");
-const blogList = document.getElementById("blog-list");
-const closeBtn = document.getElementById("close-btn");
-const username = "2102ankit"; // Replace with your GitHub username
-const repo = "2102ankit.github.io"; // Replace with your repository name
-const branch = "main"; // Replace with the branch name if different
+const projects = [
+  {
+    name: "Nyaydoot",
+    desc: "AI legal assistant with vernacular support, trained on 8 law textbooks and the Indian Constitution",
+    tags: ["React", "Tailwind", "Node.js", "MongoDB", "Botpress"],
+    url: "https://github.com/2102ankit/SIH-2023",
+    thumb: "Nyaydoot",
+  },
+  {
+    name: "RecomZone",
+    desc: "Personalized recommendation engine using content-based filtering on movie and music datasets",
+    tags: ["Pandas", "NumPy", "Scikit-learn", "MERN"],
+    url: "https://github.com/2102ankit/recomzone",
+    thumb: "RecomZone",
+  },
+  {
+    name: "Swift Reader",
+    desc: "Summarizes news articles into bite-sized content (60-100 words) with fast processing.",
+    tags: ["MERN", "Distilbart", "Bing News API", "BeautifulSoup"],
+    url: "https://github.com/2102ankit/Swift-Reader",
+    thumb: "Swift Reader",
+  },
+  {
+    name: "DevStar Toolkit",
+    desc: "Free online developer toolkit for maximizing efficiency and productivity.",
+    tags: ["Svelte", "Full-Stack", "DevOps"],
+    url: "https://github.com/2102ankit/devstar",
+    thumb: "DevStar",
+  },
+  {
+    name: "Airbnb Clone",
+    desc: "Full-stack Airbnb clone with real-time booking and user authentication.",
+    tags: ["MERN", "React", "Node.js"],
+    url: "https://github.com/2102ankit/airbnb-clone",
+    thumb: "Airbnb",
+  },
+  {
+    name: "Major Project",
+    desc: "Academic project exploring advanced computing concepts in Python.",
+    tags: ["Python", "Distributed Systems"],
+    url: "https://github.com/2102ankit/major",
+    thumb: "Major Project",
+  },
+];
 
-// Function to load and display the blog content
-async function loadBlog(url, timestampFilename = "") {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error("Failed to fetch blog content");
-    }
-    const content = await response.text();
-    const { title, date, markdownContent } = extractMetadata(content);
+let currentIndex = 0;
 
-    blogContent.innerHTML = `
-      <div id="blog-title">${title}</div>
-      <p><strong>Date:</strong> ${date}</p>
-      <div class="line"></div>
-      <div id="blog-details">
-        ${marked.parse(markdownContent)}
-      </div>
-    `;
+function renderCarousel() {
+  const carousel = document.getElementById("projectCarousel");
+  carousel.innerHTML = "";
 
-    // Show the blog content and hide the blog list
-    blogList.style.display = "none";
-    blogContent.style.display = "block";
-    closeBtn.style.display = "block";
-
-    // URL format for the browser's history and hash (use the title and timestamp)
-    const timestamp =
-      timestampFilename ||
-      `${new Date(date).getTime()}_${encodeURIComponent(
-        title.replace(/\s+/g, "_")
-      )}`;
-
-    // Update browser history, store both pathname and hash
-    const newUrl = `${window.location.pathname}#${timestamp}`;
-    history.pushState({ blog: timestamp }, title, newUrl);
-  } catch (error) {
-    console.error("Error loading blog:", error);
-    // Reset the URL to the homepage or desired fallback state
-    history.replaceState("", document.title, window.location.pathname); // Keep the history intact
-    window.location.hash = ""; // Reset the hash
+  // Render 5 projects: left, left-center, center, right-center, right
+  for (let i = -2; i <= 2; i++) {
+    const index = (currentIndex + i + projects.length) % projects.length;
+    const project = projects[index];
+    const card = document.createElement("div");
+    card.className = `project-card ${
+      i === 0 ? "active" : i === -1 || i === 1 ? "side" : "edge"
+    }`;
+    card.innerHTML = `
+                    <div class="project-thumb">${project.thumb}</div>
+                    <div class="project-info">
+                        <h3 class="project-title">${project.name}</h3>
+                        <p class="project-desc">${project.desc}</p>
+                        <div class="project-tags">
+                            ${project.tags
+                              .map((tag) => `<span class="tag">${tag}</span>`)
+                              .join("")}
+                        </div>
+                        <div class="project-links">
+                            <a href="${
+                              project.url
+                            }" class="project-link" target="_blank">GitHub</a>
+                        </div>
+                    </div>
+                `;
+    carousel.appendChild(card);
   }
 }
 
-// Function to extract title, date, and content from YAML front matter
-function extractMetadata(content) {
-  const metadataMatch = content.match(/^---\n([\s\S]*?)\n---/); // Match the front matter
-  if (metadataMatch) {
-    const metadata = metadataMatch[1];
-    const titleMatch = metadata.match(/title:\s*(.+)/);
-    const dateMatch = metadata.match(/date:\s*(.+)/);
-
-    const title = titleMatch ? titleMatch[1] : "Untitled Blog";
-    const date = dateMatch ? dateMatch[1] : "No Date Provided";
-    const markdownContent = content.replace(metadataMatch[0], "").trim(); // Remove front matter
-
-    return { title, date, markdownContent };
-  }
-
-  return {
-    title: "Untitled Blog",
-    date: "No Date Provided",
-    markdownContent: content,
-  };
+function nextProject() {
+  currentIndex = (currentIndex + 1) % projects.length;
+  renderCarousel();
 }
 
-// Clear content and return to the blog list
-function clearContent() {
-  closeBtn.style.display = "none";
-  blogContent.style.display = "none";
-  blogList.style.display = "block";
-
-  // Use replaceState to keep the current state in the history stack
-  history.replaceState("", document.title, window.location.pathname); // Clear URL
+function prevProject() {
+  currentIndex = (currentIndex - 1 + projects.length) % projects.length;
+  renderCarousel();
 }
 
-// Close button to clear content and go back to the main page
-closeBtn.addEventListener("click", clearContent);
+// Auto-rotate every 5 seconds
+setInterval(nextProject, 5000);
 
-// Function to handle manual navigation (when user goes back in URL)
-window.addEventListener("popstate", function (event) {
-  const state = event.state;
-  if (state && state.blog) {
-    const blogUrl = `${state.blog}.md`;
-    const fileUrl = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/${blogUrl}`;
-    loadBlog(fileUrl, state.blog);
+// Initial render
+renderCarousel();
+
+// Navbar scroll effect
+window.addEventListener("scroll", () => {
+  const nav = document.querySelector("nav");
+  if (window.scrollY > 50) {
+    nav.classList.add("scrolled");
   } else {
-    clearContent();
+    nav.classList.remove("scrolled");
   }
 });
 
-// Function to populate the blog list dynamically
-async function populateBlogList() {
-  try {
-    const files = await fetchMarkdownFiles();
-    const blogList = document.getElementById("blog-list").querySelector("ul");
-
-    // Clear existing list before adding new ones
-    blogList.innerHTML = "";
-
-    files.forEach((file) => {
-      const listItem = document.createElement("li");
-      const link = document.createElement("a");
-
-      // Construct file URL
-      const fileUrl = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/${file.name}`;
-
-      // Fetch content for each file and extract title and date
-      fetch(fileUrl)
-        .then((response) => response.text())
-        .then((content) => {
-          const { title, date } = extractMetadata(content);
-
-          // URL format: timestamp_filename (using date)
-          const timestampFilename = `${new Date(
-            date
-          ).getTime()}_${encodeURIComponent(title.replace(/\s+/g, "_"))}`;
-          link.href = `#${timestampFilename}`;
-          link.textContent = title; // Display title instead of filename
-          link.addEventListener("click", (e) => {
-            e.preventDefault();
-            loadBlog(fileUrl, timestampFilename);
-          });
-
-          listItem.appendChild(link);
-          blogList.appendChild(listItem);
-        })
-        .catch((error) => {
-          console.error("Error loading blog content:", error);
-          // Reset the URL in case of error
-          history.replaceState("", document.title, window.location.pathname);
-          window.location.hash = ""; // Reset the hash
-        });
-    });
-  } catch (error) {
-    console.error("Error populating blog list:", error);
-    // Reset the URL in case of error
-    history.replaceState("", document.title, window.location.pathname);
-    window.location.hash = ""; // Reset the hash
-  }
-}
-
-// Function to fetch markdown files from GitHub repository
-async function fetchMarkdownFiles() {
-  try {
-    const response = await fetch(
-      `https://api.github.com/repos/${username}/${repo}/contents`
-    );
-    if (!response.ok) {
-      throw new Error("Failed to fetch markdown files");
+// Active nav link
+const sections = document.querySelectorAll("section");
+const navLinks = document.querySelectorAll("nav a");
+window.addEventListener("scroll", () => {
+  let current = "";
+  sections.forEach((section) => {
+    const sectionTop = section.offsetTop;
+    if (scrollY >= sectionTop - 200) {
+      current = section.getAttribute("id");
     }
-    const data = await response.json();
+  });
+  navLinks.forEach((link) => {
+    link.classList.remove("active");
+    if (link.getAttribute("href") === `#${current}`) {
+      link.classList.add("active");
+    }
+  });
+});
 
-    return data.filter((file) => file.name.endsWith(".md"));
-  } catch (error) {
-    console.error("Error fetching markdown files:", error);
-    // Reset the URL in case of error
-    history.replaceState("", document.title, window.location.pathname);
-    window.location.hash = ""; // Reset the hash
-    return [];
-  }
-}
+// Scroll animations
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("animate");
+      }
+    });
+  },
+  { threshold: 0.1 }
+);
 
-// Initialize the blog list
-populateBlogList();
+sections.forEach((section) => observer.observe(section));
 
-// Handle the initial page load based on the URL hash
-if (window.location.hash) {
-  const blogUrl = window.location.hash.slice(1) + ".md";
-  const fileUrl = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/${blogUrl}`;
-  loadBlog(fileUrl, window.location.hash.slice(1));
-}
-
-// Check if the current URL hash is '#NaN_Untitled_Blog'
-if (window.location.hash === "#NaN_Untitled_Blog") {
-  // Redirect to the homepage
-  window.location.href = "/";
-}
+// Smooth scroll for nav links
+navLinks.forEach((link) => {
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute("href"));
+    target.scrollIntoView({ behavior: "smooth" });
+  });
+});
