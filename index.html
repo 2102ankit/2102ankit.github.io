@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ankit Mishra</title>
+<script>
+  (function(){
+    var t = localStorage.getItem('theme');
+    if(!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+<style>
+  :root{
+    --bg:#fdfdfc; --fg:#1a1a1a; --muted:#6b6b6b; --line:#e5e5e3; --card:#ffffff;
+    --chip-bg:rgba(0,0,0,.05); --chip-border:rgba(0,0,0,.08); --accent:#2563eb; --accent-soft:rgba(37,99,235,.1);
+  }
+  html[data-theme="dark"]{
+    --bg:#0e0e0e; --fg:#eaeaea; --muted:#8f8f8f; --line:#272727; --card:#161616;
+    --chip-bg:rgba(255,255,255,.06); --chip-border:rgba(255,255,255,.08); --accent:#5b8def; --accent-soft:rgba(91,141,239,.12);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; color-scheme:light dark;}
+  html, body{max-width:100%; overflow-x:hidden;}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size:15px; line-height:1.65; transition:background .25s ease, color .25s ease;
+  }
+  .wrap{max-width:640px; margin:0 auto; padding:56px 24px 100px;}
+  header{margin-bottom:56px; display:flex; justify-content:space-between; align-items:flex-start; gap:16px;}
+  h1{font-size:20px; margin:0 0 4px; font-weight:600;}
+  .role{color:var(--muted); margin:0 0 18px;}
+  nav{display:flex; gap:18px; flex-wrap:wrap; font-size:13px;}
+  nav a{color:var(--muted); text-decoration:none; border-bottom:1px solid transparent; padding-bottom:1px;}
+  nav a:hover{color:var(--fg); border-color:var(--fg);}
+  #theme-toggle{
+    border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:8px;
+    width:34px; height:34px; cursor:pointer; flex-shrink:0; font-size:15px; display:flex; align-items:center; justify-content:center;
+    transition:border-color .2s ease, transform .15s ease;
+  }
+  #theme-toggle:hover{border-color:var(--fg);}
+  #theme-toggle:active{transform:scale(.92);}
+  section{margin-bottom:52px;}
+  h2{font-size:12px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin:0 0 20px; font-weight:600;}
+  p{margin:0 0 12px; color:var(--fg);}
+  a{color:var(--fg);}
+
+  /* Experience */
+  .job{margin-bottom:26px;}
+  .job-head{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:4px;}
+  .job-title{font-weight:600;}
+  .job-co-wrap{position:relative; display:inline-block;}
+  .job-co{
+    color:var(--accent); text-decoration:underline; text-decoration-color:var(--chip-border);
+    cursor:pointer; font-weight:500;
+  }
+  .live-dot{display:inline-block; width:7px; height:7px; border-radius:50%; background:#22c55e; margin-left:6px; position:relative; top:-1px;}
+  .live-dot::after{
+    content:""; position:absolute; inset:0; border-radius:50%; background:#22c55e; opacity:.6;
+    animation:ping 1.6s cubic-bezier(0,0,.2,1) infinite;
+  }
+  @keyframes ping{75%,100%{transform:scale(2.2); opacity:0;}}
+  .tooltip{
+    position:absolute; bottom:calc(100% + 10px); left:0; width:250px; max-width:calc(100vw - 56px); background:var(--card);
+    border:1px solid var(--line); border-radius:10px; padding:12px; box-shadow:0 8px 24px rgba(0,0,0,.15);
+    opacity:0; visibility:hidden; transform:translateY(6px); transition:opacity .18s ease, transform .18s ease;
+    z-index:20; pointer-events:none;
+  }
+  .job-co-wrap.open .tooltip, .job-co-wrap:hover .tooltip{opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto;}
+  .tooltip-title{font-weight:600; font-size:13px; color:var(--fg);}
+  .tooltip-badge{font-size:11px; color:#22c55e; font-weight:600; display:block; margin-top:2px;}
+  .tooltip-dur{font-size:11px; color:var(--muted); display:block; margin-top:2px;}
+  .tooltip-desc{font-size:11px; color:var(--muted); margin-top:8px; line-height:1.5;}
+  .job-time{color:var(--muted); font-size:13px; white-space:nowrap;}
+  .job ul{margin:8px 0 0; padding-left:18px; color:var(--muted); font-size:14px;}
+  .job li{margin-bottom:4px;}
+  .tags{margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;}
+  .tag{font-size:11px; padding:2px 8px; border:1px solid var(--chip-border); background:var(--chip-bg); border-radius:20px; color:var(--muted);}
+
+  /* Skills */
+  .skills-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;}
+  .skills-head h2{margin:0;}
+  #skills-toggle{
+    background:none; border:none; color:var(--accent); font-family:inherit; font-size:12px; font-weight:600;
+    cursor:pointer; display:flex; align-items:center; gap:4px; padding:0;
+  }
+  #skills-toggle .arrow{display:inline-block; transition:transform .3s ease; font-size:10px;}
+  #skills-toggle.expanded .arrow{transform:rotate(180deg);}
+  .skills-row{display:grid; grid-template-columns:96px 1fr; gap:14px; margin-bottom:4px; font-size:14px; align-items:start;}
+  .skills-row .label{color:var(--muted); font-size:13px; padding-top:2px;}
+  .items-wrap{overflow:hidden; transition:max-height .5s cubic-bezier(.22,1,.36,1);}
+  .items-inner{display:flex; flex-wrap:wrap; gap:8px 12px; padding-bottom:12px;}
+  .chip{
+    display:inline-flex; align-items:center; gap:6px; padding:3px 0; color:var(--fg); font-size:13.5px;
+    opacity:0; transform:translateY(4px) scale(.92); animation:chip-in .5s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  .chip.extra{
+    opacity:0; transform:translateY(4px) scale(.7); filter:blur(6px);
+    transition:opacity .45s cubic-bezier(.16,1,.3,1), transform .45s cubic-bezier(.16,1,.3,1), filter .45s cubic-bezier(.16,1,.3,1);
+    animation:none;
+  }
+  .skills-row.expanded .chip.extra{opacity:1; transform:translateY(0) scale(1); filter:blur(0);}
+  @keyframes chip-in{to{opacity:1; transform:translateY(0) scale(1);}}
+  .chip-icon{
+    width:16px; height:16px; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center;
+  }
+  .chip-icon img{width:100%; height:100%; object-fit:contain; filter:grayscale(1) opacity(.7); transition:filter .25s ease;}
+  .chip:hover .chip-icon img{filter:none;}
+  .chip-mono{
+    width:100%; height:100%; border-radius:5px; background:var(--chip-bg); border:1px solid var(--chip-border);
+    color:var(--muted); font-size:8.5px; font-weight:700; display:flex; align-items:center; justify-content:center;
+    letter-spacing:-.02em; transition:color .2s ease, border-color .2s ease;
+  }
+  .chip:hover .chip-mono{color:var(--accent); border-color:var(--accent);}
+  /* icons that render as solid black need inverting in dark mode to stay visible */
+  html[data-theme="dark"] .chip-icon img.invert{filter:grayscale(1) invert(1) brightness(1.7) opacity(.7);}
+  html[data-theme="dark"] .chip:hover .chip-icon img.invert{filter:invert(1) brightness(1.7);}
+
+  /* Projects accordion */
+  .proj{border-top:1px solid var(--line);}
+  .proj:last-child{border-bottom:1px solid var(--line);}
+  .proj-btn{
+    width:100%; background:none; border:none; color:var(--fg); font-family:inherit; text-align:left;
+    padding:16px 0; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:12px;
+  }
+  .proj-title{font-weight:600; font-size:15px;}
+  .proj-sub{color:var(--muted); font-size:13px; margin-top:4px; line-height:1.5;}
+  .chevron{flex-shrink:0; width:18px; height:18px; color:var(--muted); transition:transform .3s ease;}
+  .proj.open .chevron{transform:rotate(180deg); color:var(--accent);}
+  .proj-panel{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+  .proj-panel-inner{padding:0 0 20px;}
+  .proj-thumb{
+    width:100%; height:160px; border-radius:10px; margin-bottom:14px; overflow:hidden;
+    display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--muted);
+    background:linear-gradient(135deg, var(--chip-bg), var(--accent-soft)); border:1px solid var(--line);
+  }
+  .proj-thumb img{width:100%; height:100%; object-fit:cover;}
+  .proj-panel p{color:var(--muted); font-size:14px; margin:0 0 14px;}
+  .proj-links{display:flex; gap:14px;}
+  .proj-links a{
+    font-size:12.5px; color:var(--fg); text-decoration:none; border:1px solid var(--line); border-radius:6px;
+    padding:6px 12px; transition:border-color .2s ease, background .2s ease;
+  }
+  .proj-links a:hover{border-color:var(--accent); background:var(--accent-soft);}
+
+  /* Contact */
+  .contact-row{display:flex; flex-wrap:wrap; gap:18px; font-size:14px;}
+  .contact-row a{text-decoration:none; border-bottom:1px solid var(--line);}
+  .contact-row a:hover{border-color:var(--fg);}
+  footer{margin-top:60px; color:var(--muted); font-size:12px; border-top:1px solid var(--line); padding-top:20px;}
+
+  /* Copy toast */
+  #copy-toast{
+    position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(12px);
+    background:var(--fg); color:var(--bg); font-size:13px; padding:9px 16px; border-radius:8px;
+    opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; z-index:50;
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+  }
+  #copy-toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>Ankit Mishra</h1>
+      <p class="role">Full Stack Software Engineer &middot; Mumbai, India</p>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#work">Work</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+    <button id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+  </header>
+
+  <section id="about">
+    <h2>About</h2>
+    <p>I'm a full stack software engineer at <strong>ISS&#8209;Stoxx</strong>, building clean, scalable
+    solutions to complex problems. My primary stack is <strong>React, Python, and SQL Server</strong>.
+    Outside of code: music, humor, and the occasional hackathon.</p>
+  </section>
+
+  <section id="work">
+    <h2>Experience</h2>
+
+    <div class="job">
+      <div class="job-head">
+        <div>
+          <span class="job-title">Software Engineer</span> &middot;
+          <span class="job-co-wrap">
+            <span class="job-co">ISS-Stoxx</span><span class="live-dot"></span>
+            <div class="tooltip">
+              <span class="tooltip-title">ISS-Stoxx</span>
+              <span class="tooltip-badge">● Current Position</span>
+              <span class="tooltip-dur">Jul 2025 — Present</span>
+              <p class="tooltip-desc">Leading provider of data, insights and market intelligence solutions for global financial services.</p>
+            </div>
+          </span>
+        </div>
+        <div class="job-time">Jul 2025 &mdash; Present</div>
+      </div>
+      <ul>
+        <li>Automated ETL processes and built a common validation framework across pipelines</li>
+        <li>Created automated reports using Microsoft SSRS</li>
+        <li>Added features to internal reporting UI and backend modules</li>
+      </ul>
+      <div class="tags"><span class="tag">Python</span><span class="tag">SQL Server</span><span class="tag">Redis</span><span class="tag">Gitlab Actions</span><span class="tag">Docker/Podman</span></div>
+    </div>
+
+    <div class="job">
+      <div class="job-head">
+        <div>
+          <span class="job-title">Software Engineer Intern</span> &middot;
+          <span class="job-co-wrap">
+            <span class="job-co">ISS-Stoxx</span>
+            <div class="tooltip">
+              <span class="tooltip-title">ISS-Stoxx</span>
+              <span class="tooltip-dur">Jan 2025 — Jul 2025</span>
+              <p class="tooltip-desc">Leading provider of data, insights and market intelligence solutions for global financial services.</p>
+            </div>
+          </span>
+        </div>
+        <div class="job-time">Jan 2025 &mdash; Jul 2025</div>
+      </div>
+      <ul>
+        <li>Automated business processes in an existing web application</li>
+        <li>Worked on ETL of MF/ETF data; migrated a deprecated UI library to Semantic UI</li>
+      </ul>
+      <div class="tags"><span class="tag">React</span><span class="tag">Spring Boot</span><span class="tag">SQL Server</span><span class="tag">Python</span></div>
+    </div>
+
+    <div class="job">
+      <div class="job-head">
+        <div><span class="job-title">Web Development Intern</span> &middot; <span style="color:var(--fg);">Alhansat Solutions</span></div>
+        <div class="job-time">Sep 2023 &mdash; Nov 2023</div>
+      </div>
+      <ul>
+        <li>Built a dynamic business card generator module, integrated with Developerstar</li>
+      </ul>
+      <div class="tags"><span class="tag">SvelteKit</span><span class="tag">PDF.js</span><span class="tag">Tailwind</span></div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="skills-head">
+      <h2>Skills</h2>
+      <button id="skills-toggle"><span class="label-text">Show more</span> <span class="arrow">▾</span></button>
+    </div>
+    <div id="skills-list"></div>
+  </section>
+
+  <section id="projects">
+    <h2>Projects</h2>
+    <div id="projects-list"></div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <div class="contact-row">
+      <a href="mailto:2102ankitm@gmail.com" id="email-link">2102ankitm@gmail.com</a>
+      <a href="tel:+917738228239">+91 7738228239</a>
+      <a href="https://github.com/2102ankit" target="_blank">GitHub</a>
+      <a href="https://linkedin.com/in/2102ankit" target="_blank">LinkedIn</a>
+      <a href="https://x.com/2102ankit" target="_blank">Twitter</a>
+      <a href="https://www.leetcode.com/2102ankit" target="_blank">LeetCode</a>
+    </div>
+  </section>
+
+  <footer>&copy; 2026 Ankit Mishra &middot; Mumbai, India</footer>
+</div>
+
+<div id="copy-toast">Email copied to clipboard</div>
+
+<script>
+/* ---------- Theme toggle ---------- */
+const root = document.documentElement;
+const themeBtn = document.getElementById('theme-toggle');
+function applyTheme(t){
+  root.setAttribute('data-theme', t);
+  themeBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('theme', t);
+}
+applyTheme(root.getAttribute('data-theme')); // sync button icon with theme set in <head>
+themeBtn.addEventListener('click', () => {
+  applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+
+/* ---------- Email: copy to clipboard + open mailto ---------- */
+const emailLink = document.getElementById('email-link');
+const copyToast = document.getElementById('copy-toast');
+let toastTimer;
+emailLink.addEventListener('click', () => {
+  const email = emailLink.textContent.trim();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(email).catch(() => {});
+  } else {
+    const tmp = document.createElement('textarea');
+    tmp.value = email;
+    tmp.style.position = 'fixed';
+    tmp.style.opacity = '0';
+    document.body.appendChild(tmp);
+    tmp.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(tmp);
+  }
+  copyToast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => copyToast.classList.remove('show'), 2000);
+  // mailto: navigation proceeds normally via the anchor's href, no preventDefault needed
+});
+
+/* ---------- Company tooltip (tap support on mobile) ---------- */
+document.querySelectorAll('.job-co-wrap').forEach(wrap => {
+  wrap.querySelector('.job-co').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('.job-co-wrap.open').forEach(w => { if (w !== wrap) w.classList.remove('open'); });
+    wrap.classList.toggle('open');
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.job-co-wrap.open').forEach(w => w.classList.remove('open'));
+});
+
+/* ---------- Skills data + render ---------- */
+const DICON = "https://cdnjs.cloudflare.com/ajax/libs/devicon/2.16.0/icons"; // {slug}/{slug}-original.svg
+const skillCategories = [
+  { label:"Languages", skills:[
+    {n:"TypeScript",f:true,icon:"typescript/typescript-original"},
+    {n:"JavaScript",f:true,icon:"javascript/javascript-original"},
+    {n:"Python",f:true,icon:"python/python-original"},
+    {n:"Java",f:true,icon:"java/java-original"},
+    {n:"Go",f:false,icon:"go/go-original"},
+    {n:"C",f:false,icon:"c/c-original"},
+    {n:"C++",f:false,icon:"cplusplus/cplusplus-original"}
+  ]},
+  { label:"Frontend", skills:[
+    {n:"React",f:true,icon:"react/react-original"},
+    {n:"Next.js",f:true,icon:"nextjs/nextjs-original",inv:true},
+    {n:"Tailwind CSS",f:true,icon:"tailwindcss/tailwindcss-plain"},
+    {n:"shadcn/ui",f:false},
+    {n:"Motion",f:false},
+    {n:"Redux",f:false,icon:"redux/redux-original"},
+    {n:"React Query",f:false},
+    {n:"React Router",f:false,icon:"reactrouter/reactrouter-original"},
+    {n:"Semantic UI",f:false,icon:"semanticui/semanticui-original"},
+    {n:"TanStack",f:false}
+  ]},
+  { label:"Backend", skills:[
+    {n:"Node.js",f:true,icon:"nodejs/nodejs-original"},
+    {n:"Express",f:true,icon:"express/express-original",inv:true},
+    {n:"Spring Boot",f:true,icon:"spring/spring-original"}
+  ]},
+  { label:"Database", skills:[
+    {n:"SQL Server",f:true,icon:"microsoftsqlserver/microsoftsqlserver-plain"},
+    {n:"Redis",f:true,icon:"redis/redis-original"},
+    {n:"MongoDB",f:true,icon:"mongodb/mongodb-original"},
+    {n:"SQLite",f:false,icon:"sqlite/sqlite-original"}
+  ]},
+  { label:"Infra", skills:[
+    {n:"Docker",f:true,icon:"docker/docker-original"},
+    {n:"Bash",f:true,icon:"bash/bash-original",inv:true},
+    {n:"Podman",f:false}
+  ]},
+  { label:"Tools", skills:[
+    {n:"Git",f:true,icon:"git/git-original"},
+    {n:"Postman",f:true,icon:"postman/postman-original"},
+    {n:"Cursor",f:true},
+    {n:"Claude",f:true},
+    {n:"GitHub",f:false,icon:"github/github-original",inv:true},
+    {n:"GitLab",f:false,icon:"gitlab/gitlab-original"},
+    {n:"VS Code",f:false,icon:"vscode/vscode-original"},
+    {n:"IntelliJ Idea",f:false,icon:"intellij/intellij-original"},
+    {n:"PyCharm",f:false,icon:"pycharm/pycharm-original"},
+    {n:"MCP",f:false}
+  ]},
+  { label:"Others", skills:[
+    {n:"NumPy",f:false,icon:"numpy/numpy-original"},
+    {n:"D3",f:false,icon:"d3js/d3js-original",inv:true},
+    {n:"JWT",f:false},
+    {n:"Tableau",f:false}
+  ]}
+];
+
+// initials used as a guaranteed fallback badge if a logo fails to load or has none
+function initials(name){
+  const words = name.replace(/[^A-Za-z0-9+. ]/g,'').split(' ').filter(Boolean);
+  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  return name.slice(0,2).toUpperCase();
+}
+
+window.iconFallback = function(img){
+  const mono = document.createElement('span');
+  mono.className = 'chip-mono';
+  mono.textContent = img.dataset.mono;
+  img.replaceWith(mono);
+};
+
+const skillsList = document.getElementById('skills-list');
+skillCategories.forEach(cat => {
+  const row = document.createElement('div');
+  row.className = 'skills-row';
+  const featured = cat.skills.filter(s => s.f);
+  const rest = cat.skills.filter(s => !s.f);
+  let delay = 0;
+  const iconTag = s => {
+    const mono = initials(s.n);
+    if (!s.icon) return `<span class="chip-icon"><span class="chip-mono">${mono}</span></span>`;
+    return `<span class="chip-icon"><img src="${DICON}/${s.icon}.svg" alt="" loading="lazy" data-mono="${mono}" class="${s.inv ? 'invert' : ''}" onerror="window.iconFallback(this)"></span>`;
+  };
+  const chipHtml = (s, extra) => {
+    delay += 30;
+    return `<span class="chip${extra ? ' extra' : ''}" style="${extra ? '' : `animation-delay:${delay}ms`}">${iconTag(s)}${s.n}</span>`;
+  };
+  row.innerHTML = `<span class="label">${cat.label}</span><div class="items-wrap"><div class="items-inner">${featured.map(s=>chipHtml(s,false)).join('')}${rest.map(s=>chipHtml(s,true)).join('')}</div></div>`;
+  skillsList.appendChild(row);
+});
+
+// set each row's collapsed height once icons have had a chance to lay out
+function measureCollapsed(){
+  document.querySelectorAll('.skills-row').forEach(row => {
+    const wrap = row.querySelector('.items-wrap');
+    const inner = row.querySelector('.items-inner');
+    inner.querySelectorAll('.chip.extra').forEach(c => c.style.setProperty('display','none'));
+    wrap.style.maxHeight = inner.scrollHeight + 'px';
+    inner.querySelectorAll('.chip.extra').forEach(c => c.style.removeProperty('display'));
+  });
+}
+requestAnimationFrame(() => requestAnimationFrame(measureCollapsed));
+
+let skillsExpanded = false;
+const skillsToggleBtn = document.getElementById('skills-toggle');
+skillsToggleBtn.addEventListener('click', () => {
+  skillsExpanded = !skillsExpanded;
+  skillsToggleBtn.classList.toggle('expanded', skillsExpanded);
+  skillsToggleBtn.querySelector('.label-text').textContent = skillsExpanded ? 'Show less' : 'Show more';
+
+  document.querySelectorAll('.skills-row').forEach((row, rowIndex) => {
+    const wrap = row.querySelector('.items-wrap');
+    const inner = row.querySelector('.items-inner');
+    row.classList.toggle('expanded', skillsExpanded);
+
+    if (skillsExpanded) {
+      // stagger each extra chip's transition-delay so they cascade in, like the original
+      row.querySelectorAll('.chip.extra').forEach((chip, i) => {
+        chip.style.transitionDelay = `${i * 35}ms`;
+      });
+      wrap.style.maxHeight = inner.scrollHeight + 'px';
+    } else {
+      // reverse stagger on collapse (last chip fades first)
+      const extras = [...row.querySelectorAll('.chip.extra')];
+      extras.forEach((chip, i) => {
+        chip.style.transitionDelay = `${(extras.length - 1 - i) * 25}ms`;
+      });
+      // collapse back to the featured-only height
+      extras.forEach(c => c.style.setProperty('display','none'));
+      wrap.style.maxHeight = inner.scrollHeight + 'px';
+      extras.forEach(c => c.style.removeProperty('display'));
+    }
+  });
+});
+
+/* ---------- Projects accordion ---------- */
+const projects = [
+  { title:"Nimbus Datagrid", tags:"React · Tailwind · TanStack", emoji:"📊",
+    desc:"High-performance React datatable with sorting, filtering, grouping-aggregation pagination for any csv data file",
+    long:"Datagrid is a lightweight, customizable React component for rendering large datasets efficiently. Supports row selection, column resizing, virtual scrolling for 10k+ rows and integrations like CSV/PDF export. Built with Tailwind for styling; ideal for dashboards and admin panels.",
+    gh:"https://github.com/2102ankit/nimbus/", demo:"https://nimbus-grid.vercel.app/" },
+  { title:"Nyaydoot", tags:"MERN · Botpress · RAG", emoji:"⚖️",
+    desc:"AI legal assistant with vernacular support, trained on 8 law textbooks and the Indian Constitution",
+    long:"Built for Smart India Hackathon 2023 — Top 6 of 350+ teams. Combines a MERN stack, Botpress conversational flows, and a RAG pipeline over Indian legal texts to answer questions in regional languages.",
+    gh:"https://github.com/2102ankit/SIH-2023" },
+  { title:"RecomZone", tags:"Python · Scikit-learn · MERN", emoji:"🎬",
+    desc:"Content-based recommendation engine for movies & music using TF-IDF + cosine similarity.",
+    long:"Demonstrates personalized recommendations without collaborative data. Built with Pandas for data wrangling, Scikit-learn for vectorization & similarity, and a MERN stack UI to browse suggestions. Datasets: MovieLens 1M & Million Song Dataset subset.",
+    gh:"https://github.com/2102ankit/recomzone" },
+  { title:"Swift Reader", tags:"MERN · HuggingFace · Web Scraping", emoji:"📰",
+    desc:"Summarizes news articles into bite-sized content (60-100 words) with fast processing.",
+    long:"Fetches trending news via Bing News API, extracts clean text with BeautifulSoup, and generates ultra-fast summaries with the DistilBART model. MERN stack serves a responsive dashboard with one-click summarization.",
+    gh:"https://github.com/2102ankit/Swift-Reader" },
+  { title:"JSON Parser", tags:"C++ · Recursive Descent", emoji:"🔤",
+    desc:"Hand-written recursive descent JSON parser in C++",
+    long:"A teaching-oriented JSON parser that tokenizes and parses JSON strings following the official spec. Includes error handling, pretty-printing and a tiny CLI. Great for understanding parser combinator patterns.",
+    gh:"https://github.com/2102ankit/coding-challenges/tree/main/json-parser" },
+  { title:"Web Server", tags:"C++ · Multithreading", emoji:"🖥️",
+    desc:"High-performance HTTP/1.1 web server in C++ using threading and custom routing.",
+    long:"Academic multithreaded web server supporting GET and static file serving. Handles concurrent connections efficiently.",
+    gh:"https://github.com/2102ankit/coding-challenges/tree/main/web-server" },
+  { title:"URL Shortener", tags:"Go · SHA-256", emoji:"🔗",
+    desc:"Prototype Go URL shortener with SHA-256 shortening & high throughput",
+    long:"Built in Go with roughly 21k requests/second throughput. GET, POST & DELETE endpoints.",
+    gh:"https://github.com/2102ankit/coding-challenges/tree/main/url_shortner" }
+];
+
+const projList = document.getElementById('projects-list');
+projects.forEach((p, i) => {
+  const el = document.createElement('div');
+  el.className = 'proj';
+  el.innerHTML = `
+    <button class="proj-btn">
+      <div>
+        <div class="proj-title">${p.title}</div>
+        <div class="proj-sub">${p.desc}</div>
+      </div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="proj-panel">
+      <div class="proj-panel-inner">
+        <div class="proj-thumb"><span style="font-size:40px;">${p.emoji}</span></div>
+        <div class="tags" style="margin-bottom:10px;">${p.tags.split(' · ').map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        <p>${p.long}</p>
+        <div class="proj-links">
+          ${p.gh ? `<a href="${p.gh}" target="_blank">GitHub →</a>` : ''}
+          ${p.demo ? `<a href="${p.demo}" target="_blank">Live demo →</a>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+  const btn = el.querySelector('.proj-btn');
+  const panel = el.querySelector('.proj-panel');
+  btn.addEventListener('click', () => {
+    const isOpen = el.classList.contains('open');
+    document.querySelectorAll('.proj.open').forEach(o => {
+      o.classList.remove('open');
+      o.querySelector('.proj-panel').style.maxHeight = null;
+    });
+    if (!isOpen) {
+      el.classList.add('open');
+      panel.style.maxHeight = panel.scrollHeight + 'px';
+    }
+  });
+  projList.appendChild(el);
+});
+</script>
+</body>
+</html>
