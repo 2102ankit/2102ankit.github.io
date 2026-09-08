@@ -47,7 +47,10 @@
     html,
     body {
       max-width: 100%;
+      width: 100%;
       overflow-x: hidden;
+      overscroll-behavior-x: none;
+      touch-action: pan-y;
     }
 
     .theme-toggle-shape,
@@ -81,8 +84,11 @@
 
     .wrap {
       max-width: 640px;
+      width: 100%;
       margin: 0 auto;
       padding: 0px 24px 100px;
+      overflow-x: hidden;
+      position: relative;
     }
 
     a {
@@ -154,7 +160,7 @@
     @media (max-width:520px) {
       .header-inner {
         flex-wrap: nowrap;
-        align-items: center;
+        align-items: flex-start;
         padding: 20px 24px;
       }
 
@@ -165,9 +171,31 @@
 
       .role {
         margin-bottom: 14px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+      }
+
+      .role .role-sep {
+        display: none;
+      }
+
+      .role .role-line2 {
+        display: block;
+      }
+
+      #theme-toggle {
+        margin-top: 1px;
+      }
+
+      .job-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
+
+      .job-time {
+        margin-top: 1px;
       }
 
       #site-nav {
@@ -265,15 +293,29 @@
     /* inline-block keeps the whole highlighted phrase together as one unit instead of
    letting it break onto two lines mid-phrase */
     .highlight-mark {
-      background: rgba(250, 204, 21, .45);
+      position: relative;
+      isolation: isolate;
+      background: none;
       color: inherit;
-      border-radius: 3px;
-      padding: 0 4px;
+      padding: 0 6px;
       font-weight: 600;
       display: inline-block;
     }
 
-    html[data-theme="dark"] .highlight-mark {
+    .highlight-mark::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      top: 8%;
+      bottom: 8%;
+      left: -2px;
+      right: -2px;
+      background: rgba(250, 204, 21, .45);
+      transform: skewX(-12deg);
+      border-radius: 2px;
+    }
+
+    html[data-theme="dark"] .highlight-mark::before {
       background: rgba(250, 204, 21, .22);
     }
 
@@ -461,6 +503,64 @@
       align-items: center;
       gap: 4px;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+    }
+
+    #skills-toggle:hover,
+    #skills-toggle:focus,
+    #skills-toggle:focus-visible,
+    #skills-toggle:active {
+      background: none;
+      outline: 0;
+      box-shadow: none;
+    }
+
+    .list-toggle {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 16px 0 0;
+      -webkit-tap-highlight-color: transparent;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+    }
+
+    .list-toggle:hover,
+    .list-toggle:focus,
+    .list-toggle:focus-visible,
+    .list-toggle:active {
+      background: none;
+      outline: 0;
+      box-shadow: none;
+    }
+
+    .list-toggle .arrow {
+      display: inline-flex;
+      transition: transform .3s ease;
+    }
+
+    .list-toggle .arrow svg {
+      width: 11px;
+      height: 11px;
+    }
+
+    .list-toggle.expanded .arrow {
+      transform: rotate(180deg);
+    }
+
+    .extra-hidden {
+      display: none !important;
     }
 
     #skills-toggle .arrow {
@@ -599,6 +699,19 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
+      -webkit-tap-highlight-color: transparent;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+    }
+
+    .proj-btn:hover,
+    .proj-btn:focus,
+    .proj-btn:focus-visible,
+    .proj-btn:active {
+      background: none;
+      outline: 0;
+      box-shadow: none;
     }
 
     .proj-title {
@@ -712,19 +825,22 @@
 
     /* ---------- Education ---------- */
     .edu-item {
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
       padding-bottom: 22px;
       margin-bottom: 22px;
       border-bottom: 1px solid var(--line);
-      flex-wrap: wrap;
     }
 
     .edu-item:last-child {
       border-bottom: none;
       margin-bottom: 0;
       padding-bottom: 0;
+    }
+
+    .edu-head {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
     .edu-logo {
@@ -751,9 +867,9 @@
       padding: 6px;
     }
 
-    .edu-body {
+    .edu-title-wrap {
       flex: 1;
-      min-width: 200px;
+      min-width: 120px;
     }
 
     .edu-title {
@@ -764,7 +880,9 @@
     .edu-sub {
       color: var(--muted);
       font-size: 13px;
-      margin-top: 2px;
+      margin-top: 10px;
+      width: 100%;
+      overflow-wrap: break-word;
     }
 
     .edu-course {
@@ -772,6 +890,8 @@
       font-size: 12.5px;
       margin-top: 6px;
       line-height: 1.5;
+      width: 100%;
+      overflow-wrap: break-word;
     }
 
     .edu-time {
@@ -922,6 +1042,76 @@
       padding-top: 20px;
     }
 
+    /* ---------- Progressive top blur ---------- */
+    /* Each band only overlaps its immediate neighbor (never more than 2 layers touch
+       at any given pixel), so blur never compounds/cascades into a glowing wash-out.
+       Blur strength decreases from top to bottom; the final band fades all the way to
+       transparent well before the box's own edge, so there's no visible hard line. */
+    #progressive-blur {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      pointer-events: none;
+      z-index: 90;
+    }
+
+    #progressive-blur>div {
+      position: absolute;
+      inset: 0;
+    }
+
+    #progressive-blur>div:nth-child(1) {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 12.5%, transparent 25%);
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 12.5%, transparent 25%);
+    }
+
+    #progressive-blur>div:nth-child(2) {
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      mask-image: linear-gradient(to bottom, transparent 0%, #000 12.5%, #000 25%, transparent 37.5%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12.5%, #000 25%, transparent 37.5%);
+    }
+
+    #progressive-blur>div:nth-child(3) {
+      backdrop-filter: blur(9px);
+      -webkit-backdrop-filter: blur(9px);
+      mask-image: linear-gradient(to bottom, transparent 12.5%, #000 25%, #000 37.5%, transparent 50%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 12.5%, #000 25%, #000 37.5%, transparent 50%);
+    }
+
+    #progressive-blur>div:nth-child(4) {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      mask-image: linear-gradient(to bottom, transparent 25%, #000 37.5%, #000 50%, transparent 62.5%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 25%, #000 37.5%, #000 50%, transparent 62.5%);
+    }
+
+    #progressive-blur>div:nth-child(5) {
+      backdrop-filter: blur(3.5px);
+      -webkit-backdrop-filter: blur(3.5px);
+      mask-image: linear-gradient(to bottom, transparent 37.5%, #000 50%, #000 62.5%, transparent 75%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 37.5%, #000 50%, #000 62.5%, transparent 75%);
+    }
+
+    #progressive-blur>div:nth-child(6) {
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      mask-image: linear-gradient(to bottom, transparent 50%, #000 62.5%, #000 75%, transparent 87.5%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 50%, #000 62.5%, #000 75%, transparent 87.5%);
+    }
+
+    #progressive-blur>div:nth-child(7) {
+      backdrop-filter: blur(1px);
+      -webkit-backdrop-filter: blur(1px);
+      /* triangular peak at 87.5%, no plateau — guarantees 0 opacity right at the 52px edge */
+      mask-image: linear-gradient(to bottom, transparent 62.5%, #000 87.5%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 62.5%, #000 87.5%, transparent 100%);
+    }
+
     /* ---------- Copy toast ---------- */
     #copy-toast {
       position: fixed;
@@ -960,11 +1150,22 @@
 
 <body>
 
+  <div id="progressive-blur" aria-hidden="true">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
   <header id="site-header">
     <div class="header-inner">
       <div>
         <h1>Ankit Mishra</h1>
-        <p class="role">Full Stack Software Engineer &middot; Mumbai, India</p>
+        <p class="role"><span class="role-line1">Full Stack Software Engineer</span><span class="role-sep">
+            &middot; </span><span class="role-line2">Mumbai, India</span></p>
         <nav id="site-nav">
           <a href="#about" data-section="about">About</a>
           <a href="#work" data-section="work">Experience</a>
@@ -1100,24 +1301,28 @@
     <section id="education">
       <h2>Education</h2>
       <div class="edu-item">
-        <div class="edu-logo"><img src="https://logo.clearbit.com/spit.ac.in" alt=""
-            onerror="this.parentElement.textContent='SPIT';"></div>
-        <div class="edu-body">
-          <div class="edu-title">B.Tech in Computer Engineering</div>
-          <div class="edu-sub">Sardar Patel Institute of Technology, Mumbai</div>
-          <div class="edu-course">Coursework: Database Management Systems, Operating Systems, Computer Networks</div>
+        <div class="edu-head">
+          <div class="edu-logo"><img src="https://logo.clearbit.com/spit.ac.in" alt=""
+              onerror="this.parentElement.textContent='SPIT';"></div>
+          <div class="edu-title-wrap">
+            <div class="edu-title">B.Tech in Computer Engineering</div>
+          </div>
+          <div class="edu-time">2021 &mdash; 2025</div>
         </div>
-        <div class="edu-time">2021 &mdash; 2025</div>
+        <div class="edu-sub">Sardar Patel Institute of Technology, Mumbai</div>
+        <div class="edu-course">Coursework: Database Management Systems, Operating Systems, Computer Networks</div>
       </div>
       <div class="edu-item">
-        <div class="edu-logo"><img src="https://logo.clearbit.com/spjimr.org" alt=""
-            onerror="this.parentElement.textContent='SPJIMR';"></div>
-        <div class="edu-body">
-          <div class="edu-title">Minor in Management</div>
-          <div class="edu-sub">S. P. Jain Institute of Management and Research, Mumbai</div>
-          <div class="edu-course">Coursework: Accounting &amp; Finance, Supply Chain, IT for Management, Marketing</div>
+        <div class="edu-head">
+          <div class="edu-logo"><img src="https://logo.clearbit.com/spjimr.org" alt=""
+              onerror="this.parentElement.textContent='SPJIMR';"></div>
+          <div class="edu-title-wrap">
+            <div class="edu-title">Minor in Management</div>
+          </div>
+          <div class="edu-time">2021 &mdash; 2025</div>
         </div>
-        <div class="edu-time">2021 &mdash; 2025</div>
+        <div class="edu-sub">S. P. Jain Institute of Management and Research, Mumbai</div>
+        <div class="edu-course">Coursework: Accounting &amp; Finance, Supply Chain, IT for Management, Marketing</div>
       </div>
     </section>
 
@@ -1355,6 +1560,31 @@
       });
     });
 
+    /* ---------- Generic "Show more" for lists with > 3 items ---------- */
+    function setupShowMore(containerEl, itemSelector, limit = 3) {
+      const items = Array.from(containerEl.querySelectorAll(itemSelector));
+      if (items.length <= limit) return;
+
+      items.slice(limit).forEach(it => it.classList.add('extra-hidden'));
+
+      const btn = document.createElement('button');
+      btn.className = 'list-toggle';
+      btn.innerHTML = `<span class="label-text">Show more</span> <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>`;
+
+      let expanded = false;
+      btn.addEventListener('click', () => {
+        expanded = !expanded;
+        btn.classList.toggle('expanded', expanded);
+        btn.querySelector('.label-text').textContent = expanded ? 'Show less' : 'Show more';
+        items.slice(limit).forEach(it => it.classList.toggle('extra-hidden', !expanded));
+        if (!expanded) {
+          containerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+
+      containerEl.insertAdjacentElement('afterend', btn);
+    }
+
     /* ---------- Blog ---------- */
     const posts = [
       { title: "Pagination Strategies in Modern Applications", desc: "Choosing the right approach", date: "2026-04-18", slug: "pagination-strategies-article" },
@@ -1380,6 +1610,7 @@
   `;
       blogList.appendChild(a);
     });
+    setupShowMore(blogList, '.blog-item', 3);
 
     /* ---------- Projects accordion (with real preview photos, graceful fallback) ---------- */
     const projects = [
@@ -1480,6 +1711,7 @@
       });
       projList.appendChild(el);
     });
+    setupShowMore(projList, '.proj', 3);
 
     /* ---------- Scrollspy: highlight active nav link ---------- */
     const navLinks = Array.from(document.querySelectorAll('#site-nav a'));
