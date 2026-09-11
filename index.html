@@ -1541,17 +1541,25 @@
 
     /* ---------- Blog ---------- */
     const posts = [
+      { title: "Understanding SQL Indexes", desc: "What indexes are, how B-trees make them fast, and when NOT to add one", date: "2026-09-12", slug: "understanding-sql-indexes", internal: true },
       { title: "Pagination Strategies in Modern Applications", desc: "Choosing the right approach", date: "2026-04-18", slug: "pagination-strategies-article" },
       { title: "Making a Leather Button with Tailwind", desc: "Replicating a cool leather button design I saw on Twitter", date: "2025-12-13", slug: "leather-button" },
       { title: "Hello World: My First Blog Post", desc: "Welcome to my blog — thoughts on development, design and everything in between", date: "2025-11-02", slug: "hello-world" }
     ];
+    // Posts with `internal: true` are read straight off this site from
+    // `{slug}.md` via blog.html. Posts without it still point at the old
+    // Vercel blog until they're migrated over.
     const blogList = document.getElementById('blog-list');
     posts.forEach(post => {
       const a = document.createElement('a');
       a.className = 'blog-item';
-      a.href = `https://2102ankit.vercel.app/blogs/${post.slug}`;
-      a.target = '_blank';
-      a.rel = 'noopener';
+      if (post.internal) {
+        a.href = `blog.html?post=${post.slug}`;
+      } else {
+        a.href = `https://2102ankit.vercel.app/blogs/${post.slug}`;
+        a.target = '_blank';
+        a.rel = 'noopener';
+      }
       a.innerHTML = `
     <div>
       <div class="blog-title">${post.title}</div>
