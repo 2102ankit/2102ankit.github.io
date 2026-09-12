@@ -1,3 +1,9 @@
+---
+title: Understanding SQL Indexes
+description: How indexes work and when they actually help
+date: 2026-09-12
+show: true
+---
 An index is just a sorted lookup structure that sits alongside your table. Without one, the database has to scan every row to find what you're looking for — a full table scan. With one, it can jump straight to the matching rows, the same way a book's index saves you from reading every page to find a topic.
 
 > **Rule of thumb:** measure first, index second. An index you never query against is pure overhead — it slows down every write and buys you nothing back.
