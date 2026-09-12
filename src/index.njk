@@ -351,7 +351,7 @@ permalink: "/"
             isolation: isolate;
             background: none;
             color: inherit;
-            padding: 0 6px;
+            padding: 0 1px;
             font-weight: 600;
             display: inline-block;
         }
@@ -703,7 +703,7 @@ permalink: "/"
 
         .chip.extra {
             opacity: 0;
-            transform: translateY(4px) scale(.7);
+            transform: none;
             filter: blur(6px);
             transition: opacity .45s cubic-bezier(.16, 1, .3, 1), transform .45s cubic-bezier(.16, 1, .3, 1), filter .45s cubic-bezier(.16, 1, .3, 1);
             animation: none;
@@ -711,7 +711,7 @@ permalink: "/"
 
         .skills-row.expanded .chip.extra {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: none;
             filter: blur(0);
         }
 
@@ -729,6 +729,14 @@ permalink: "/"
             display: inline-flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .skill-icon-image {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+            display: block;
+            transform: scale(var(--skill-icon-scale, 1));
         }
 
         .chip-mono {
@@ -1607,6 +1615,7 @@ permalink: "/"
         const themeBtn = document.getElementById('theme-toggle');
         function applyTheme(t) {
             root.setAttribute('data-theme', t);
+            updateSkillIcons(t);
             try { localStorage.setItem('theme', t); } catch (e) { }
         }
         themeBtn.addEventListener('click', () => {
@@ -1680,14 +1689,16 @@ permalink: "/"
             {
                 label: "Languages", skills: [
                     { n: "TypeScript", f: true }, { n: "JavaScript", f: true }, { n: "Python", f: true }, { n: "Java", f: true },
-                    { n: "Go", f: false }, { n: "C", f: false }, { n: "C++", f: false }
+                    // { n: "Go", f: false }, 
+                    { n: "C", f: false }, { n: "C++", f: false }
                 ]
             },
             {
                 label: "Frontend", skills: [
                     { n: "React", f: true }, { n: "Next.js", f: true }, { n: "Tailwind CSS", f: true },
                     { n: "shadcn/ui", f: false }, { n: "Motion", f: false }, { n: "Redux", f: false }, { n: "React Query", f: false },
-                    { n: "React Router", f: false }, { n: "Semantic UI", f: false }, { n: "TanStack", f: false }
+                    { n: "React Router", f: false }, { n: "Semantic UI", f: false },
+                    //  { n: "TanStack", f: false }
                 ]
             },
             {
@@ -1718,11 +1729,75 @@ permalink: "/"
             }
         ];
 
-        // initials used for the icon badge (kept monochrome by design — see chip-mono styling)
+        const skillIconFiles = {
+            "TypeScript": { light: "typescript.svg" },
+            "JavaScript": { light: "javascript.svg" },
+            "Python": { light: "python.svg" },
+            "Java": { light: "java.svg" },
+            "Go": { light: "Go-Logo_Blue.svg", scale: 2 },
+            "C": { light: "c.svg" },
+            "C++": { light: "c-plusplus.svg" },
+            "React": { light: "react.svg" },
+            "Next.js": { light: "nextdotjs-wordmark-light.svg", dark: "nextdotjs-wordmark-dark.svg", scale: 1.8 },
+            "Tailwind CSS": { light: "tailwind-css.svg" },
+            "shadcn/ui": { light: "shadcn-ui-light.svg", dark: "shadcn-ui-dark.svg" },
+            "Motion": { light: "motion-light.svg", dark: "motion-dark.svg", scale: 1.5 },
+            "Redux": { light: "redux.svg" },
+            "React Query": { light: "react-query.svg" },
+            "React Router": { light: "react-router.svg" },
+            "Semantic UI": { light: "semantic-ui.svg" },
+            "TanStack": { light: "tanstack.svg" },
+            "Node.js": { light: "nodejs.svg" },
+            "Express": { light: "expressdotjs-light.svg", dark: "expressdotjs.svg" },
+            "Spring Boot": { light: "spring-boot.svg" },
+            "SQL Server": { light: "Microsoft_SQL_Server_2025_icon.svg" },
+            "Redis": { light: "redis.svg" },
+            "MongoDB": { light: "mongodb.svg" },
+            "SQLite": { light: "sqlite.svg", scale: 2 },
+            "Docker": { light: "docker.svg" },
+            "Bash": { light: "bash-light.svg", dark: "bash.svg" },
+            "Podman": { light: "podman.svg" },
+            "Git": { light: "git.svg" },
+            "Postman": { light: "postman.svg" },
+            "Cursor": { light: "cursor-light.svg", dark: "cursor.svg" },
+            "Claude": { light: "claude.svg" },
+            "GitHub": { light: "github-light.svg", dark: "github-dark.svg" },
+            "GitLab": { light: "gitlab.svg" },
+            "VS Code": { light: "visual-studio-code.svg" },
+            "IntelliJ Idea": { light: "intellij-idea.svg" },
+            "PyCharm": { light: "pycharm.svg" },
+            "MCP": { light: "model-context-protocol-light.svg", dark: "model-context-protocol.svg" },
+            "NumPy": { light: "NumPy.svg" },
+            "D3": { light: "d3.svg" },
+            "JWT": { light: "jwt.svg" },
+            "Tableau": { light: "tableau.svg" }
+        };
+
         function initials(name) {
             const words = name.replace(/[^A-Za-z0-9+. ]/g, '').split(' ').filter(Boolean);
             if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
             return name.slice(0, 2).toUpperCase();
+        }
+
+        function skillIcon(name) {
+            const files = skillIconFiles[name];
+            if (!files) return `<span class="chip-mono">${initials(name)}</span>`;
+            const light = files.light;
+            const dark = files.dark || light;
+            const file = root.getAttribute('data-theme') === 'dark' ? dark : light;
+            const scale = files.scale || 1;
+            return `<img class="skill-icon-image" src="/images/skills/${file}" data-light-icon="${light}" data-dark-icon="${dark}" data-scale="${scale}" style="--skill-icon-scale:${scale}" alt="" aria-hidden="true">`;
+        }
+
+        function skillIconSpacing(name) {
+            const scale = skillIconFiles[name]?.scale || 1;
+            return Math.max(0, (scale - 1) * 8);
+        }
+
+        function updateSkillIcons(theme) {
+            document.querySelectorAll('.skill-icon-image').forEach(icon => {
+                icon.src = `/images/skills/${theme === 'dark' ? icon.dataset.darkIcon : icon.dataset.lightIcon}`;
+            });
         }
 
         const skillsList = document.getElementById('skills-list');
@@ -1733,8 +1808,10 @@ permalink: "/"
             row.className = 'skills-row' + (featured.length === 0 ? ' no-featured' : '');
             let delay = 0;
             const chipHtml = (s, extra) => {
-                delay += 30;
-                return `<span class="chip${extra ? ' extra' : ''}" style="${extra ? '' : `animation-delay:${delay}ms`}"><span class="chip-icon"><span class="chip-mono">${initials(s.n)}</span></span>${s.n}</span>`;
+                // delay += 30;
+                const spacing = skillIconSpacing(s.n);
+                const iconStyle = spacing ? ` style="margin-inline:${spacing}px"` : '';
+                return `<span class="chip${extra ? ' extra' : ''}" style="${extra ? '' : `animation-delay:${delay}ms`}"><span class="chip-icon"${iconStyle}>${skillIcon(s.n)}</span>${s.n}</span>`;
             };
             row.innerHTML = `<span class="label">${cat.label}</span><div class="items-wrap"><div class="items-inner">${featured.map(s => chipHtml(s, false)).join('')}${rest.map(s => chipHtml(s, true)).join('')}</div></div>`;
             skillsList.appendChild(row);
@@ -1766,13 +1843,13 @@ permalink: "/"
 
                 if (skillsExpanded) {
                     row.querySelectorAll('.chip.extra').forEach((chip, i) => {
-                        chip.style.transitionDelay = `${i * 35}ms`;
+                        chip.style.transitionDelay = `${i * 0}ms`;
                     });
                     wrap.style.maxHeight = inner.scrollHeight + 'px';
                 } else {
                     const extras = [...row.querySelectorAll('.chip.extra')];
                     extras.forEach((chip, i) => {
-                        chip.style.transitionDelay = `${(extras.length - 1 - i) * 25}ms`;
+                        chip.style.transitionDelay = `${(extras.length - 1 - i) * 0}ms`;
                     });
                     extras.forEach(c => c.style.setProperty('display', 'none'));
                     wrap.style.maxHeight = inner.scrollHeight + 'px';
