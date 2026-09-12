@@ -27,8 +27,8 @@
   <meta name="twitter:title" content="Ankit Mishra — Full Stack Software Engineer">
   <meta name="twitter:description"
     content="Portfolio of Ankit Mishra, a Full Stack Software Engineer based in Mumbai, India.">
-  <link rel="icon" href="./favicon.ico" type="image/x-icon">
-  <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://rsms.me/">
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
   <style>
@@ -1468,7 +1468,6 @@
             <circle cx="12" cy="17" r="5" />
             <path d="M12 18v-2h-.5" />
           </svg>
-          
         </div>
         <div class="ach-body">
           <div class="ach-title">Top 25 out of 300+ teams</div>
@@ -1500,6 +1499,7 @@
 
   <div id="copy-toast">Copied to clipboard</div>
 
+  <script src="blog-posts.js"></script>
   <script>
     /* ---------- Theme toggle ---------- */
     const root = document.documentElement;
@@ -1705,40 +1705,40 @@
       containerEl.insertAdjacentElement('afterend', btn);
     }
 
-    /* ---------- Blog ---------- */
-    const posts = [
-      { title: "Understanding SQL Indexes", desc: "What indexes are, how B-trees make them fast, and when NOT to add one", date: "2026-09-12", slug: "understanding-sql-indexes", internal: true },
-      { title: "Pagination Strategies in Modern Applications", desc: "Choosing the right approach", date: "2026-04-18", slug: "pagination-strategies-article" },
-      { title: "Making a Leather Button with Tailwind", desc: "Replicating a cool leather button design I saw on Twitter", date: "2025-12-13", slug: "leather-button" },
-      { title: "Hello World: My First Blog Post", desc: "Welcome to my blog — thoughts on development, design and everything in between", date: "2025-11-02", slug: "hello-world" }
-    ];
-    // Posts with `internal: true` are read straight off this site from
-    // `{slug}.md` via blog.html. Posts without it still point at the old
-    // Vercel blog until they're migrated over.
+    /* ---------- Blog ----------
+       Posts are discovered from posts-manifest.json + each post's own
+       frontmatter (see blog-posts.js) — nothing about individual posts
+       is hardcoded here. Only posts with `show: true` render, newest
+       date first. */
     const blogList = document.getElementById('blog-list');
-    posts.forEach(post => {
-      const a = document.createElement('a');
-      a.className = 'blog-item';
-      if (post.internal) {
-        a.href = `blog.html?post=${post.slug}`;
-      } else {
-        a.href = `https://2102ankit.vercel.app/blogs/${post.slug}`;
-        a.target = '_blank';
-        a.rel = 'noopener';
-      }
-      a.innerHTML = `
+    loadPublishedPosts().then(posts => {
+      posts.forEach(post => {
+        const a = document.createElement('a');
+        a.className = 'blog-item';
+        if (post.external) {
+          a.href = post.external;
+          a.target = '_blank';
+          a.rel = 'noopener';
+        } else {
+          a.href = `blog.html?post=${post.slug}`;
+        }
+        a.innerHTML = `
     <div>
       <div class="blog-title">${post.title}</div>
-      <div class="blog-desc">${post.desc}</div>
+      <div class="blog-desc">${post.description}</div>
     </div>
     <div class="blog-meta">
       <span class="blog-date">${new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
     </div>
   `;
-      blogList.appendChild(a);
+        blogList.appendChild(a);
+      });
+      setupShowMore(blogList, '.blog-item', 3);
+    }).catch(err => {
+      console.error('Failed to load posts:', err);
     });
-    setupShowMore(blogList, '.blog-item', 3);
+
 
     /* ---------- Projects accordion (with real preview photos, graceful fallback) ---------- */
     const projects = [

@@ -573,6 +573,7 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
+  <script src="blog-posts.js"></script>
   <script>
     /* ---------- Theme toggle ---------- */
     var root = document.documentElement;
@@ -583,19 +584,11 @@
       try { localStorage.setItem('theme', next); } catch (e) { }
     });
 
-    /* ---------- Post metadata ----------
-       Keep this in sync with the `posts` array in index.html —
-       it supplies the title/date/description shown above the
-       article, while the actual writing lives in {slug}.md. */
-    const posts = {
-      "understanding-sql-indexes": {
-        title: "Understanding SQL Indexes",
-        desc: "What indexes are, how B-trees make them fast, and when NOT to add one",
-        date: "2026-09-12"
-      }
-    };
-
-    /* ---------- Render ---------- */
+    /* ---------- Render ----------
+       Title, date, and description all come from the post's own
+       frontmatter (see blog-posts.js) — nothing post-specific is
+       hardcoded on this page. A slug not in posts-manifest.json, or a
+       file that fails to load, falls through to the not-found state. */
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('post');
     const headerEl = document.getElementById('post-header');
@@ -606,24 +599,18 @@
       bodyEl.innerHTML = '<p class="state-msg">Couldn\'t find that post. <a href="index.html#blog">Back to the blog list</a>.</p>';
     }
 
-    if (!slug || !posts[slug]) {
+    if (!slug) {
       showNotFound();
     } else {
-      const meta = posts[slug];
-      headerEl.innerHTML = `
-        <div class="post-date">${new Date(meta.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
-        <h1 class="post-title">${meta.title}</h1>
-        <div class="post-desc">${meta.desc}</div>
+      loadPostBySlug(slug)
+        .then(post => {
+          headerEl.innerHTML = `
+        <div class="post-date">${new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+        <h1 class="post-title">${post.title}</h1>
+        <div class="post-desc">${post.description}</div>
       `;
-      document.title = 'Blog | ' + meta.title;
-
-      fetch(`${slug}.md`)
-        .then(res => {
-          if (!res.ok) throw new Error('not found');
-          return res.text();
-        })
-        .then(md => {
-          bodyEl.innerHTML = marked.parse(md);
+          document.title = 'Blog | ' + post.title;
+          bodyEl.innerHTML = marked.parse(post.content);
           // Wrap tables so wide ones scroll horizontally instead of
           // breaking the mobile layout.
           bodyEl.querySelectorAll('table').forEach(function (table) {
@@ -636,7 +623,7 @@
           openExternalLinksInNewTab(bodyEl);
         })
         .catch(() => {
-          bodyEl.innerHTML = '<p class="state-msg">Couldn\'t load this post right now. Try again shortly.</p>';
+          showNotFound();
         });
     }
 
