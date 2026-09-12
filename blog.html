@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog — Ankit Mishra</title>
+  <title>Blogs</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://rsms.me/">
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
   <style>
@@ -30,7 +32,9 @@
       --accent-soft: rgba(106, 151, 240, .12);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     html {
       color-scheme: light dark;
@@ -72,9 +76,14 @@
       transition: color .15s ease;
     }
 
-    .back-link:hover { color: var(--fg); }
+    .back-link:hover {
+      color: var(--fg);
+    }
 
-    .back-link svg { width: 14px; height: 14px; }
+    .back-link svg {
+      width: 14px;
+      height: 14px;
+    }
 
     #theme-toggle {
       position: relative;
@@ -101,9 +110,17 @@
       transition: opacity .2s ease;
     }
 
-    #theme-toggle .sun { opacity: 0; }
-    html[data-theme="dark"] #theme-toggle .moon { opacity: 0; }
-    html[data-theme="dark"] #theme-toggle .sun { opacity: 1; }
+    #theme-toggle .sun {
+      opacity: 0;
+    }
+
+    html[data-theme="dark"] #theme-toggle .moon {
+      opacity: 0;
+    }
+
+    html[data-theme="dark"] #theme-toggle .sun {
+      opacity: 1;
+    }
 
     /* ---------- Header ---------- */
     .post-date {
@@ -139,7 +156,9 @@
       color: var(--fg);
     }
 
-    article > *:first-child { margin-top: 0; }
+    article>*:first-child {
+      margin-top: 0;
+    }
 
     article h2 {
       font-size: 24px;
@@ -160,7 +179,8 @@
       margin: 0 0 26px;
     }
 
-    article ul, article ol {
+    article ul,
+    article ol {
       margin: 0 0 26px;
       padding-left: 24px;
     }
@@ -170,11 +190,17 @@
       padding-left: 4px;
     }
 
-    article li:last-child { margin-bottom: 0; }
+    article li:last-child {
+      margin-bottom: 0;
+    }
 
-    article li > p { margin-bottom: 12px; }
+    article li>p {
+      margin-bottom: 12px;
+    }
 
-    article strong { font-weight: 650; }
+    article strong {
+      font-weight: 650;
+    }
 
     article a {
       color: var(--accent);
@@ -184,7 +210,9 @@
       transition: text-decoration-color .15s ease;
     }
 
-    article a:hover { text-decoration-color: var(--accent); }
+    article a:hover {
+      text-decoration-color: var(--accent);
+    }
 
     article code {
       background: var(--accent-soft);
@@ -218,8 +246,13 @@
       font-style: italic;
     }
 
-    article blockquote p { margin-bottom: 10px; }
-    article blockquote p:last-child { margin-bottom: 0; }
+    article blockquote p {
+      margin-bottom: 10px;
+    }
+
+    article blockquote p:last-child {
+      margin-bottom: 0;
+    }
 
     article hr {
       border: none;
@@ -239,12 +272,31 @@
     }
 
     @media (max-width: 480px) {
-      .wrap { padding: 40px 22px 100px; }
-      h1.post-title { font-size: 30px; }
-      .post-desc { font-size: 16.5px; margin-bottom: 44px; }
-      article { font-size: 16.5px; }
-      article h2 { font-size: 21px; margin: 44px 0 14px; }
-      article h3 { font-size: 17.5px; }
+      .wrap {
+        padding: 40px 22px 100px;
+      }
+
+      h1.post-title {
+        font-size: 30px;
+      }
+
+      .post-desc {
+        font-size: 16.5px;
+        margin-bottom: 44px;
+      }
+
+      article {
+        font-size: 16.5px;
+      }
+
+      article h2 {
+        font-size: 21px;
+        margin: 44px 0 14px;
+      }
+
+      article h3 {
+        font-size: 17.5px;
+      }
     }
   </style>
   <script>
@@ -264,12 +316,23 @@
   <div class="wrap">
     <div class="top-row">
       <a class="back-link" href="index.html#blog">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
         Back to blog
       </a>
       <button id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
-        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
-        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4" />
+          <path
+            d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+        </svg>
       </button>
     </div>
 
@@ -322,7 +385,7 @@
         <h1 class="post-title">${meta.title}</h1>
         <div class="post-desc">${meta.desc}</div>
       `;
-      document.title = meta.title + ' — Ankit Mishra';
+      document.title = 'Blog | ' + meta.title;
 
       fetch(`${slug}.md`)
         .then(res => {
