@@ -1,0 +1,28 @@
+{
+  "name": "githubio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "blog-posts.js",
+  "scripts": {
+    "build": "node -e \"require('fs').rmSync('_site', { recursive: true, force: true })\" && eleventy",
+    "clean": "node -e \"require('fs').rmSync('_site', { recursive: true, force: true })\"",
+    "start": "eleventy --serve",
+    "test": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2102ankit/2102ankit.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.2",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.2"
+  },
+  "bugs": {
+    "url": "https://github.com/2102ankit/2102ankit.github.io/issues"
+  },
+  "homepage": "https://github.com/2102ankit/2102ankit.github.io#readme"
+}

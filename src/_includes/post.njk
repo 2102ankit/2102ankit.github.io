@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{{ title }} | Ankit Mishra</title>
+
+  <meta name="description" content="{{ description }}">
+
+  <meta name="author" content="Ankit Mishra">
+
+  <meta name="robots" content="index, follow">
+
+  <link
+    rel="canonical"
+    href="https://2102ankit.github.io/blog/{{ page.fileSlug }}/"
+  >
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url"
+    content="https://2102ankit.github.io/blog/{{ page.fileSlug }}/">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ title }}">
+  <meta name="twitter:description" content="{{ description }}">
+
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Fira+Code:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/assets/blog.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": {{ title | dump | safe }},
+  "description": {{ description | dump | safe }},
+  "datePublished": "{{ date | isoDate }}",
+  "dateModified": "{{ date | isoDate }}",
+  "author": {
+    "@type": "Person",
+    "name": "Ankit Mishra",
+    "url": "https://2102ankit.github.io/"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Ankit Mishra"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://2102ankit.github.io/blog/{{ page.fileSlug }}/"
+  }
+}
+</script>
+</head>
+
+<body>
+
+  <main class="wrap">
+
+    <div class="top-row">
+      <a class="back-link" href="/">
+        ← Back to portfolio
+      </a>
+
+      <button
+        id="theme-toggle"
+        aria-label="Toggle theme"
+        title="Toggle theme">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+        </svg>
+      </button>
+    </div>
+
+    <header>
+      <div class="post-date">
+        {{ date | postDate }}
+      </div>
+
+      <h1 class="post-title">
+        {{ title }}
+      </h1>
+
+      <p class="post-desc">
+        {{ description }}
+      </p>
+    </header>
+
+    <article>
+      {{ content | safe }}
+    </article>
+
+  </main>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var savedTheme = null;
+      try { savedTheme = localStorage.getItem('theme'); } catch (e) { }
+      root.setAttribute('data-theme', savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+      document.getElementById('theme-toggle').addEventListener('click', function () {
+        var nextTheme = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', nextTheme);
+        try { localStorage.setItem('theme', nextTheme); } catch (e) { }
+      });
+
+      var copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+      var checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+
+      document.querySelectorAll('article pre').forEach(function (pre) {
+        var code = pre.querySelector('code');
+        if (!code) return;
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'code-block';
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(pre);
+
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'code-copy-btn';
+        button.setAttribute('aria-label', 'Copy code');
+        button.title = 'Copy code';
+        button.innerHTML = copyIcon;
+        button.addEventListener('click', function () {
+          navigator.clipboard.writeText(code.textContent).then(function () {
+            button.innerHTML = checkIcon;
+            button.classList.add('copied');
+            button.setAttribute('aria-label', 'Copied');
+            button.title = 'Copied';
+            window.setTimeout(function () {
+              button.innerHTML = copyIcon;
+              button.classList.remove('copied');
+              button.setAttribute('aria-label', 'Copy code');
+              button.title = 'Copy code';
+            }, 1000);
+          });
+        });
+        wrapper.appendChild(button);
+      });
+    })();
+  </script>
+</body>
+</html>

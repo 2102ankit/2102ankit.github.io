@@ -1,3 +1,6 @@
+---
+permalink: "/"
+---
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,15 +21,18 @@
     content="Ankit Mishra, Full Stack Software Engineer, Software Developer, Mumbai, React, Python, SQL Server, Portfolio">
   <meta name="author" content="Ankit Mishra">
   <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://2102ankit.github.io/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Ankit Mishra — Full Stack Software Engineer">
   <meta property="og:description"
     content="Portfolio of Ankit Mishra, a Full Stack Software Engineer based in Mumbai, India. Explore experience, skills, projects, and writing.">
+  <meta property="og:url" content="https://2102ankit.github.io/">
   <meta property="og:site_name" content="Ankit Mishra">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Ankit Mishra — Full Stack Software Engineer">
   <meta name="twitter:description"
     content="Portfolio of Ankit Mishra, a Full Stack Software Engineer based in Mumbai, India.">
+  <meta name="twitter:url" content="https://2102ankit.github.io/">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://rsms.me/">
@@ -1478,9 +1484,40 @@
     </section>
 
     <section id="blog">
-      <h2>Blog</h2>
-      <div id="blog-list"></div>
-    </section>
+  <h2>Blog</h2>
+
+  <div class="blog-list">
+
+    {% for post in collections.posts %}
+
+      <a
+        href="{{ post.url }}"
+        class="blog-item">
+
+        <div>
+          <div class="blog-title">
+            {{ post.data.title }}
+          </div>
+
+          <div class="blog-desc">
+            {{ post.data.description }}
+          </div>
+        </div>
+
+        <div class="blog-meta">
+          <time datetime="{{ post.date | isoDate }}">
+            {{ post.date | postDateShort }}
+          </time>
+
+          →
+        </div>
+
+      </a>
+
+    {% endfor %}
+
+  </div>
+</section>
 
     <section id="contact">
       <h2>Contact</h2>
@@ -1499,7 +1536,6 @@
 
   <div id="copy-toast">Copied to clipboard</div>
 
-  <script src="blog-posts.js"></script>
   <script>
     /* ---------- Theme toggle ---------- */
     const root = document.documentElement;
@@ -1704,41 +1740,6 @@
 
       containerEl.insertAdjacentElement('afterend', btn);
     }
-
-    /* ---------- Blog ----------
-       Posts are discovered from posts-manifest.json + each post's own
-       frontmatter (see blog-posts.js) — nothing about individual posts
-       is hardcoded here. Only posts with `show: true` render, newest
-       date first. */
-    const blogList = document.getElementById('blog-list');
-    loadPublishedPosts().then(posts => {
-      posts.forEach(post => {
-        const a = document.createElement('a');
-        a.className = 'blog-item';
-        if (post.external) {
-          a.href = post.external;
-          a.target = '_blank';
-          a.rel = 'noopener';
-        } else {
-          a.href = `blog.html?post=${post.slug}`;
-        }
-        a.innerHTML = `
-    <div>
-      <div class="blog-title">${post.title}</div>
-      <div class="blog-desc">${post.description}</div>
-    </div>
-    <div class="blog-meta">
-      <span class="blog-date">${new Date(post.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-    </div>
-  `;
-        blogList.appendChild(a);
-      });
-      setupShowMore(blogList, '.blog-item', 3);
-    }).catch(err => {
-      console.error('Failed to load posts:', err);
-    });
-
 
     /* ---------- Projects accordion (with real preview photos, graceful fallback) ---------- */
     const projects = [

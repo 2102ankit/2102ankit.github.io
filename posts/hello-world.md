@@ -3,6 +3,7 @@ title: "Hello World: My First Blog Post"
 description: "Welcome to my blog! This is where I'll share my thoughts on development, design and everything in between."
 date: 2025-11-02
 show: true
+permalink: "/blog/hello-world/"
 ---
 
 # Welcome to My Blog

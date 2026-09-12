@@ -1,0 +1,10 @@
+# Eleventy output and local dependencies
+_site/
+node_modules/
+
+# Local OS/editor files
+.DS_Store
+Thumbs.db
+
+# Draft notes that are not published
+next.md
