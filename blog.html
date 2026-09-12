@@ -9,16 +9,25 @@
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://rsms.me/">
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Fira+Code:wght@400;500;600&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --bg: #fdfdfc;
       --fg: #1a1a1a;
       --muted: #6b6b6b;
       --faint: #9a9a96;
+      --fainter: #c2c2be;
       --line: #e5e5e3;
       --card: #f7f7f5;
       --accent: #2563eb;
       --accent-soft: rgba(37, 99, 235, .08);
+      --heading: "Lora", Georgia, serif;
+      --body: "IBM Plex Sans", "Inter", sans-serif;
+      --mono: "Fira Code", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     }
 
     html[data-theme="dark"] {
@@ -26,6 +35,7 @@
       --fg: #eaeaea;
       --muted: #9a9a97;
       --faint: #6e6e6b;
+      --fainter: #4c4c49;
       --line: #262624;
       --card: #171716;
       --accent: #6a97f0;
@@ -46,15 +56,16 @@
       background: var(--bg);
       color: var(--fg);
       font-family: 'Inter', sans-serif;
+      font-size: 15px;
       font-feature-settings: 'ss01' on, 'cv01' on;
       -webkit-font-smoothing: antialiased;
       transition: background .25s ease, color .25s ease;
     }
 
     .wrap {
-      max-width: 680px;
+      max-width: 640px;
       margin: 0 auto;
-      padding: 56px 28px 140px;
+      padding: 56px 24px 140px;
     }
 
     /* ---------- Top bar ---------- */
@@ -123,37 +134,57 @@
     }
 
     /* ---------- Header ---------- */
+    /* Mono, uppercase, tracked-out — the same label treatment the
+       portfolio uses for its section headers, so a post reads as a
+       continuation of the site rather than a separate template. */
     .post-date {
       color: var(--faint);
-      font-size: 13px;
+      font-family: var(--mono);
+      font-size: 12px;
       font-weight: 500;
-      letter-spacing: .04em;
+      letter-spacing: .1em;
       text-transform: uppercase;
       margin-bottom: 18px;
     }
 
+    /* Lora renders with a noticeably shorter x-height than the sans
+       faces around it, so the title needs a few extra px and the full
+       700 weight to hold its own as the page's largest text. */
     h1.post-title {
-      font-size: 38px;
+      font-family: var(--heading);
+      font-size: 30px;
       font-weight: 700;
-      letter-spacing: -.02em;
-      line-height: 1.18;
-      margin: 0 0 20px;
+      letter-spacing: -.006em;
+      line-height: 1.28;
+      margin: 0 0 14px;
+      text-wrap: balance;
     }
 
     .post-desc {
       color: var(--muted);
-      font-size: 18px;
-      line-height: 1.55;
-      margin-bottom: 56px;
+      font-family: var(--body);
+      font-weight: 400;
+      font-size: 16.5px;
+      line-height: 1.6;
+      margin-bottom: 44px;
+      text-wrap: pretty;
     }
 
-    /* ---------- Article typography ---------- */
+    /* ---------- Article typography ----------
+       IBM Plex Sans for the running text — it optically reads a touch
+       larger than a serif at the same size, so the body size comes down
+       slightly from what a serif setting would use, with extra leading
+       to keep long paragraphs comfortable. Lora carries the headings for
+       a bit of editorial contrast against all that sans. */
     article {
       border-top: 1px solid var(--line);
-      padding-top: 48px;
-      font-size: 18px;
-      line-height: 1.8;
+      padding-top: 40px;
+      font-family: var(--body);
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.68;
       color: var(--fg);
+      text-wrap: pretty;
     }
 
     article>*:first-child {
@@ -161,45 +192,65 @@
     }
 
     article h2 {
-      font-size: 24px;
-      font-weight: 650;
-      letter-spacing: -.01em;
-      line-height: 1.3;
-      margin: 56px 0 18px;
+      font-family: var(--heading);
+      font-size: 20.5px;
+      font-weight: 700;
+      letter-spacing: -.003em;
+      line-height: 1.4;
+      margin: 42px 0 14px;
+      text-wrap: balance;
     }
 
     article h3 {
-      font-size: 19px;
-      font-weight: 650;
-      letter-spacing: -.005em;
-      margin: 40px 0 14px;
+      font-family: var(--heading);
+      font-size: 17.5px;
+      font-weight: 600;
+      color: var(--fg);
+      margin: 30px 0 10px;
+      text-wrap: balance;
     }
 
     article p {
-      margin: 0 0 26px;
+      margin: 0 0 22px;
     }
 
     article ul,
     article ol {
-      margin: 0 0 26px;
+      margin: 0 0 22px;
       padding-left: 24px;
     }
 
+    /* Tighter leading *within* an item so wrapped lines read as one thought,
+       and a clearly bigger gap *between* items so each bullet reads as its
+       own thing. Without this contrast, wrapped lines and separate items
+       end up looking the same distance apart. */
     article li {
-      margin-bottom: 12px;
-      padding-left: 4px;
+      line-height: 1.55;
+      margin-bottom: 16px;
+      padding-left: 2px;
     }
 
     article li:last-child {
       margin-bottom: 0;
     }
 
+    article li>ul,
+    article li>ol {
+      margin: 10px 0 0;
+    }
+
     article li>p {
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
     article strong {
-      font-weight: 650;
+      font-weight: 600;
+      color: var(--fg);
+    }
+
+    article em {
+      font-style: italic;
+      color: var(--fg);
     }
 
     article a {
@@ -214,40 +265,185 @@
       text-decoration-color: var(--accent);
     }
 
+    /* Fira Code — a touch wider per character than most mono faces, so
+       it runs slightly smaller here than a JetBrains/IBM Plex Mono
+       setting would, to land at the same visual size next to the body copy. */
     article code {
       background: var(--accent-soft);
-      padding: 2.5px 7px;
+      color: var(--fg);
+      padding: 2.5px 6px;
       border-radius: 5px;
-      font-size: 15px;
-      font-family: 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+      font-family: var(--mono);
+      font-size: 0.82em;
+      font-weight: 500;
+    }
+
+    /* Wrapper around each <pre> purely so the copy button can sit fixed
+       in the corner without scrolling away with the code underneath it —
+       the button lives outside the scrollable element, not inside it. */
+    .code-block {
+      position: relative;
+      margin: 6px 0 26px;
+    }
+
+    .code-block pre {
+      margin: 0;
+    }
+
+    .code-copy-btn {
+      position: absolute;
+      /* top: 10px;
+      right: 10px; */
+      top: 4px;
+      right: 4px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--faint);
+      cursor: pointer;
+      opacity: .55;
+      transition: opacity .15s ease, color .15s ease, border-color .15s ease, background .15s ease;
+    }
+
+    .code-block:hover .code-copy-btn,
+    .code-copy-btn:hover,
+    .code-copy-btn:focus-visible {
+      opacity: 1;
+    }
+
+    .code-copy-btn:hover {
+      color: var(--fg);
+      border-color: var(--fainter);
+    }
+
+    .code-copy-btn.copied {
+      opacity: 1;
+      color: #2fa860;
+      border-color: #2fa860;
+    }
+
+    .code-copy-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ---------- Minimal scrollbars ----------
+       A hairline thumb on transparent track for both code blocks and wide
+       tables, instead of the OS default scrollbar. Firefox via
+       scrollbar-width/scrollbar-color, everything else via the
+       ::-webkit-scrollbar pseudo-elements. */
+    article pre,
+    .table-wrap {
+      scrollbar-width: thin;
+      scrollbar-color: var(--fainter) transparent;
+    }
+
+    article pre::-webkit-scrollbar,
+    .table-wrap::-webkit-scrollbar {
+      height: 5px;
+      width: 5px;
+    }
+
+    article pre::-webkit-scrollbar-track,
+    .table-wrap::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    article pre::-webkit-scrollbar-thumb,
+    .table-wrap::-webkit-scrollbar-thumb {
+      background: var(--fainter);
+      border-radius: 10px;
+    }
+
+    article pre::-webkit-scrollbar-thumb:hover,
+    .table-wrap::-webkit-scrollbar-thumb:hover {
+      background: var(--faint);
     }
 
     article pre {
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 20px 22px;
+      border-radius: 10px;
+      /* padding: 44px 20px 18px; */
+      padding:18px 20px 8px;      
       overflow-x: auto;
-      margin: 8px 0 30px;
+      margin: 6px 0 26px;
     }
 
     article pre code {
       background: none;
       padding: 0;
-      font-size: 14.5px;
-      line-height: 1.65;
+      font-weight: 400;
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+
+    /* ---------- Tables ----------
+       Wrapped in .table-wrap by JS so wide tables scroll horizontally on
+       small screens instead of squeezing columns or breaking layout. */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 0 0 26px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    article table {
+      width: 100%;
+      min-width: 420px;
+      border-collapse: collapse;
+      font-size: 0.92em;
+    }
+
+    article th,
+    article td {
+      text-align: left;
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--line);
+      white-space: normal;
+    }
+
+    article th:first-child,
+    article td:first-child {
+      padding-left: 0;
+    }
+
+    article th:last-child,
+    article td:last-child {
+      padding-right: 0;
+    }
+
+    article thead th {
+      font-weight: 600;
+      color: var(--fg);
+      border-bottom: 2px solid var(--line);
+    }
+
+    article tbody td {
+      color: var(--muted);
+    }
+
+    article tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    article tbody code {
+      color: var(--fg);
     }
 
     article blockquote {
-      margin: 0 0 28px;
-      padding-left: 20px;
+      margin: 0 0 24px;
+      padding-left: 18px;
       border-left: 3px solid var(--line);
       color: var(--muted);
-      font-style: italic;
     }
 
     article blockquote p {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     article blockquote p:last-child {
@@ -257,14 +453,42 @@
     article hr {
       border: none;
       border-top: 1px solid var(--line);
-      margin: 44px 0;
+      margin: 40px 0;
     }
 
+    /* ---------- Images / future illustrations ---------- */
     article img {
       max-width: 100%;
+      display: block;
       border-radius: 10px;
-      margin: 8px 0 30px;
+      border: 1px solid var(--line);
+      margin: 8px 0 8px;
     }
+
+    article figure {
+      margin: 12px 0 30px;
+    }
+
+    article figure img {
+      margin-bottom: 10px;
+    }
+
+    article figcaption,
+    article .caption {
+      color: var(--faint);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: .01em;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ---------- Muting hierarchy ----------
+       fg      = body copy, the thing being read
+       muted   = supporting text (desc, blockquotes)
+       faint   = metadata (dates, captions)
+       fainter = decorative / least important (hr, dividers already use --line) */
 
     .state-msg {
       color: var(--muted);
@@ -273,29 +497,35 @@
 
     @media (max-width: 480px) {
       .wrap {
-        padding: 40px 22px 100px;
+        padding: 40px 20px 100px;
       }
 
       h1.post-title {
-        font-size: 30px;
+        font-size: 25px;
+        line-height: 1.32;
       }
 
       .post-desc {
-        font-size: 16.5px;
-        margin-bottom: 44px;
+        font-size: 15px;
+        margin-bottom: 36px;
       }
 
       article {
-        font-size: 16.5px;
+        font-size: 15.5px;
+        line-height: 1.72;
       }
 
       article h2 {
-        font-size: 21px;
-        margin: 44px 0 14px;
+        font-size: 18.5px;
+        margin: 34px 0 10px;
       }
 
       article h3 {
-        font-size: 17.5px;
+        font-size: 16.5px;
+      }
+
+      article table {
+        min-width: 340px;
       }
     }
   </style>
@@ -394,10 +624,77 @@
         })
         .then(md => {
           bodyEl.innerHTML = marked.parse(md);
+          // Wrap tables so wide ones scroll horizontally instead of
+          // breaking the mobile layout.
+          bodyEl.querySelectorAll('table').forEach(function (table) {
+            const wrap = document.createElement('div');
+            wrap.className = 'table-wrap';
+            table.parentNode.insertBefore(wrap, table);
+            wrap.appendChild(table);
+          });
+          addCodeCopyButtons(bodyEl);
+          openExternalLinksInNewTab(bodyEl);
         })
         .catch(() => {
           bodyEl.innerHTML = '<p class="state-msg">Couldn\'t load this post right now. Try again shortly.</p>';
         });
+    }
+
+    /* ---------- Copy button on code blocks ----------
+       Wraps each <pre> in a positioning container, then drops a button in
+       the corner that copies the code's raw text (via textContent, so no
+       HTML tags leak in) and morphs its icon to a checkmark for a second
+       as confirmation before reverting. */
+    const COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+    const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+
+    function addCodeCopyButtons(container) {
+      container.querySelectorAll('pre').forEach(function (pre) {
+        const code = pre.querySelector('code');
+        if (!code) return;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'code-block';
+        pre.parentNode.insertBefore(wrap, pre);
+        wrap.appendChild(pre);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'code-copy-btn';
+        btn.setAttribute('aria-label', 'Copy code');
+        btn.innerHTML = COPY_ICON;
+
+        let revertTimer = null;
+        btn.addEventListener('click', function () {
+          navigator.clipboard.writeText(code.textContent).then(function () {
+            clearTimeout(revertTimer);
+            btn.innerHTML = CHECK_ICON;
+            btn.classList.add('copied');
+            btn.setAttribute('aria-label', 'Copied');
+            revertTimer = setTimeout(function () {
+              btn.innerHTML = COPY_ICON;
+              btn.classList.remove('copied');
+              btn.setAttribute('aria-label', 'Copy code');
+            }, 1000);
+          }).catch(function () { /* clipboard unavailable — fail silently */ });
+        });
+
+        wrap.appendChild(btn);
+      });
+    }
+
+    /* ---------- External links open in a new tab ----------
+       Anything absolute (http/https) in the markdown is by definition
+       leaving the site, so it gets target=_blank + rel=noopener. Relative
+       links (back to index.html, other posts, in-page anchors) stay in
+       the same tab. */
+    function openExternalLinksInNewTab(container) {
+      container.querySelectorAll('a[href]').forEach(function (a) {
+        if (/^https?:\/\//i.test(a.getAttribute('href'))) {
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+        }
+      });
     }
   </script>
 </body>
