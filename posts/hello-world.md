@@ -10,7 +10,7 @@ permalink: "/blog/hello-world/"
 
 Hello there! 👋 This is my first blog post and I'm excited to share my journey with you.
 
-![A beautiful workspace setup](images/first-blog.jpeg)
+![A beautiful workspace setup](/images/blog/first-blog.jpeg)
 
 ## What This Blog Is About
 
