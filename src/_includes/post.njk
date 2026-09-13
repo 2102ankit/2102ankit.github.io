@@ -117,6 +117,17 @@
       var copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
       var checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
 
+      document.querySelectorAll('article table').forEach(function (table) {
+        if (table.closest('.table-wrap')) return;
+        var scroller = document.createElement('div');
+        scroller.className = 'table-wrap';
+        scroller.setAttribute('tabindex', '0');
+        scroller.setAttribute('role', 'region');
+        scroller.setAttribute('aria-label', 'Scrollable table');
+        table.parentNode.insertBefore(scroller, table);
+        scroller.appendChild(table);
+      });
+
       document.querySelectorAll('article pre').forEach(function (pre) {
         var code = pre.querySelector('code');
         if (!code) return;

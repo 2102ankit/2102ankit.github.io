@@ -20,6 +20,19 @@ module.exports = function (eleventyConfig) {
         eleventyConfig.ignores.add(file);
     });
 
+    eleventyConfig.addTransform("wrap-tables", function (content) {
+        if (!this.page || !this.page.outputPath || !this.page.outputPath.endsWith(".html")) {
+            return content;
+        }
+        if (!content || content.indexOf("<table") === -1) {
+            return content;
+        }
+        // Wrap bare <table>…</table> in a horizontally scrollable region so
+        // wide Markdown tables never push past the article column on mobile.
+        return content.replace(/<table(\s[^>]*)?>[\s\S]*?<\/table>/g, function (table) {
+            return '<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table">' + table + "</div>";
+        });
+    });
     eleventyConfig.addFilter("isoDate", function (value) {
         return new Date(value).toISOString().slice(0, 10);
     });
