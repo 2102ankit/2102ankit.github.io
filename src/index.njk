@@ -2032,20 +2032,26 @@ permalink: "/"
         setupShowMore(document.querySelector('.blog-list'), '.blog-item', 3);
 
         /* ---------- Smooth scroll for nav links (no # ever written to the URL) ---------- */
-        function easeInOutCubic(t) {
-            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        // easeOutCubic starts at full speed so the page responds instantly on
+        // click; ease-in-out variants sit nearly still for the first ~200ms.
+        function easeOutCubic(t) {
+            return 1 - Math.pow(1 - t, 3);
         }
 
-        function smoothScrollTo(targetY, duration = 700) {
+        function smoothScrollTo(targetY) {
             const startY = window.scrollY;
             const diff = targetY - startY;
+            if (diff === 0) return;
+            const duration = Math.max(350, Math.min(800, Math.abs(diff) * 0.5));
             let startTime = null;
             function step(timestamp) {
                 if (startTime === null) startTime = timestamp;
                 const elapsed = timestamp - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-                // behavior:'auto' avoids double-smoothing with the html{scroll-behavior:smooth} rule
-                window.scrollTo({ top: startY + diff * easeInOutCubic(progress), left: 0, behavior: 'auto' });
+                // behavior:'instant' is required: 'auto' defers to the
+                // html{scroll-behavior:smooth} rule, which would fight this
+                // driver with a second native animation and stall the start.
+                window.scrollTo({ top: startY + diff * easeOutCubic(progress), left: 0, behavior: 'instant' });
                 if (progress < 1) requestAnimationFrame(step);
             }
             requestAnimationFrame(step);

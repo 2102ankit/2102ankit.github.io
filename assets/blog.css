@@ -73,6 +73,16 @@ body {
 .back-link:hover { color: var(--fg); }
 .back-link svg { width: 14px; height: 14px; }
 
+.back-link .back-arrow {
+	display: inline-block;
+	transition: transform .2s ease, color .2s ease;
+}
+
+.back-link:hover .back-arrow {
+	color: var(--accent);
+	transform: translateX(-4px);
+}
+
 #theme-toggle {
 	position: relative;
 	border: 1px solid var(--line);
@@ -238,18 +248,37 @@ article pre code .token.class-name { color: #c18401; }
 article pre code .token.regex,
 article pre code .token.important,
 article pre code .token.variable { color: #e45649; }
+/* Prism tokens in dark mode (One Dark-inspired). Every light token is overridden
+   so nothing falls back to a light-only color on the dark background. */
+html[data-theme="dark"] article pre code .token.comment,
+html[data-theme="dark"] article pre code .token.prolog,
+html[data-theme="dark"] article pre code .token.doctype,
+html[data-theme="dark"] article pre code .token.cdata { color: #7f848e; font-style: italic; }
+html[data-theme="dark"] article pre code .token.punctuation { color: #abb2bf; }
 html[data-theme="dark"] article pre code .token.property,
-html[data-theme="dark"] article pre code .token.tag,
 html[data-theme="dark"] article pre code .token.boolean,
 html[data-theme="dark"] article pre code .token.number,
 html[data-theme="dark"] article pre code .token.constant,
-html[data-theme="dark"] article pre code .token.symbol { color: #e69ab5; }
+html[data-theme="dark"] article pre code .token.symbol { color: #d19a66; }
+html[data-theme="dark"] article pre code .token.tag { color: #e06c75; }
+html[data-theme="dark"] article pre code .token.selector,
+html[data-theme="dark"] article pre code .token.attr-name,
 html[data-theme="dark"] article pre code .token.string,
 html[data-theme="dark"] article pre code .token.char,
-html[data-theme="dark"] article pre code .token.builtin { color: #8dcc9e; }
-html[data-theme="dark"] article pre code .token.keyword { color: #9eb9ff; }
-html[data-theme="dark"] article pre code .token.function,
-html[data-theme="dark"] article pre code .token.class-name { color: #c6a5ed; }
+html[data-theme="dark"] article pre code .token.builtin { color: #98c379; }
+html[data-theme="dark"] article pre code .token.operator,
+html[data-theme="dark"] article pre code .token.entity,
+html[data-theme="dark"] article pre code .token.url,
+html[data-theme="dark"] article pre code .language-css .token.string,
+html[data-theme="dark"] article pre code .style .token.string { color: #56b6c2; }
+html[data-theme="dark"] article pre code .token.atrule,
+html[data-theme="dark"] article pre code .token.attr-value,
+html[data-theme="dark"] article pre code .token.keyword { color: #c678dd; }
+html[data-theme="dark"] article pre code .token.function { color: #61afef; }
+html[data-theme="dark"] article pre code .token.class-name { color: #e5c07b; }
+html[data-theme="dark"] article pre code .token.regex,
+html[data-theme="dark"] article pre code .token.important,
+html[data-theme="dark"] article pre code .token.variable { color: #e06c75; }
 
 .table-wrap {
 	display: block;
@@ -270,7 +299,7 @@ html[data-theme="dark"] article pre code .token.class-name { color: #c6a5ed; }
 .table-wrap > table { margin: 0; }
 
 article table { width: 100%; max-width: none; min-width: 420px; border-collapse: collapse; font-size: .92em; }
-article th, article td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--line); overflow-wrap: break-word; }
+article th, article td { text-align: left; padding: 5px 14px; border-bottom: 1px solid var(--line); overflow-wrap: break-word; }
 article th:first-child, article td:first-child { padding-left: 0; }
 article th:last-child, article td:last-child { padding-right: 0; }
 article thead th { font-weight: 600; color: var(--fg); border-bottom: 2px solid var(--line); }
@@ -292,6 +321,15 @@ article img { max-width: 100%; display: block; border-radius: 10px; border: 1px 
 article figure { margin: 12px 0 30px; }
 article figure img { margin-bottom: 10px; }
 article figcaption, article .caption { color: var(--faint); font-family: var(--mono); font-size: 12px; text-align: center; line-height: 1.5; }
+
+.post-footer {
+	margin-top: 60px;
+	color: var(--muted);
+	font-size: 12px;
+	border-top: 1px solid var(--line);
+	padding-top: 20px;
+}
+article figure svg { width: 100%; height: auto; display: block; font-family: var(--mono); border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
 
 .code-block { position: relative; margin: 6px 0 26px; }
 .code-block pre { margin: 0; }
