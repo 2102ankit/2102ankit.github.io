@@ -1918,6 +1918,20 @@ permalink: "/"
         /* ---------- Projects accordion (with real preview photos, graceful fallback) ---------- */
         const projects = [
             {
+                title: "DB-Up", tags: "Docker · MongoDB · MySQL · Postgres · Redis", initials: "DU",
+                image: "/images/projects/db-up.png",
+                desc: "Ready-to-run local containers for MongoDB, MySQL, PostgreSQL and Redis",
+                long: "One-command local database stack with Docker Compose. Run any database directly from GitHub via curl|sh or from a local checkout, with bundled admin UIs (mongo-express, phpMyAdmin, pgAdmin, Redis Insight), default dbuser/dbpassword credentials and persistent ./<db>/data volumes.",
+                gh: "https://github.com/2102ankit/db-up"
+            },
+            {
+                title: "WS Tic Tac Toe", tags: "Python · FastAPI · WebSockets", initials: "TT",
+                image: "/images/projects/ws-tic-tac-toe.jpeg",
+                desc: "Real-time two-player Tic Tac Toe with FastAPI WebSockets and vanilla JavaScript",
+                long: "Real-time two-player Tic Tac Toe game. Server manages player assignment (X/O), turns, moves and game results with server-side validation, winner/draw detection and disconnection handling. Client connects over /ws and sends {type: move, position}.",
+                gh: "https://github.com/2102ankit/ws-tic-tac-toe"
+            },
+            {
                 title: "Nimbus Datagrid", tags: "React · Tailwind · TanStack", initials: "ND",
                 image: "/images/projects/nimbus.jpeg",
                 desc: "High-performance React datatable with sorting, filtering, grouping-aggregation pagination for any csv data file",
